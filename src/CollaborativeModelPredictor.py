@@ -82,7 +82,7 @@ class CollaborativeModelPredictor(AbstractPredictor):
 		return map(lambda x: int(x.split(':')[0]), pairs)
 
 	def getNumberSongs(self):
-		with open("kaggle_songs.txt") as f:
+		with open("../data/kaggle_songs.txt") as f:
 			for i, l in enumerate(f):
 				pass
 			return i + 1

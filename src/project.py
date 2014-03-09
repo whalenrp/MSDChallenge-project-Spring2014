@@ -7,11 +7,11 @@ from CollaborativeMemoryPredictor import CollaborativeMemoryPredictor
 
 def main(args):
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-train_file', default='sanitized_data.txt',
+	parser.add_argument('-train_file', default='../data/sanitized_data.txt',
 		help='A file of existing user data')
-	parser.add_argument('-predict_file', default='kaggle_users.txt',
+	parser.add_argument('-predict_file', default='../data/kaggle_users.txt',
 		help='A file containing the list of users to predict songs for')
-	parser.add_argument('-output_file', default='output_data.txt',
+	parser.add_argument('-output_file', default='../data/output_data.txt',
 		help='The file to output predictions')
 	parser.add_argument('-collaborative_mode', required=True, choices=['model','memory'],
 		help='The type of algorithm to use: user-centric or item-centric')
