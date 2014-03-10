@@ -7,22 +7,22 @@ import math
 # for each user, add their corresponding song entries
 
 songMapping = dict();
-with open('kaggle_songs.txt', 'r') as f:
+with open('../data/kaggle_songs.txt', 'r') as f:
 	for line in f:
 		song,index = line.strip().split()
 		songMapping[song] = int(index)
 	pass
 pass
 
-userFile = open('kaggle_users.txt', 'r')
-userPlaysFile = open('kaggle_visible_evaluation_triplets.txt','r')
-dataOutputFile = open('sanitized_data.txt','w')
+userFile = open('../data/kaggle_users.txt', 'r')
+userPlaysFile = open('../data/kaggle_visible_evaluation_triplets.txt','r')
+dataOutputFile = open('../data/sanitized_data.txt','w')
 
 userIndex = 1
 for line in userFile:
 	curUser = line.strip()
-	dataOutputFile.write(curUser)
-	#dataOutputFile.write(str(userIndex))
+	#dataOutputFile.write(curUser)
+	dataOutputFile.write(str(userIndex))
 	userIndex += 1
 	playcountUser,song,count = userPlaysFile.readline().strip().split()
 	while curUser == playcountUser:

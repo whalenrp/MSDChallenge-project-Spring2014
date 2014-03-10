@@ -1,4 +1,5 @@
 import sys # used for debugging temporarily
+import time
 from AbstractPredictor import AbstractPredictor
 from scipy.sparse import coo_matrix
 
@@ -8,50 +9,48 @@ class CollaborativeModelPredictor(AbstractPredictor):
 	def __init__(self, training_file, predict_file, output_file, alpha, exponent):
 		AbstractPredictor.__init__(self, training_file, predict_file, 
 			output_file, alpha, exponent)
+		self.numSongs = self.getNumberSongs()
 		pass
 
-	def predict(self, userId):
+	def predict(self, uVec, user2songs):
 		"""
 		Given the id of a user from the kaggle_users file, this method
 		will compare this user to every other user, aggregating their 
 		preferences together to provide a list of the top 500 recommendations.
 		"""
 
-		# Find the listening history of the provided user
-		uVec = None
-		with open(self.training_file, 'r') as f:
-			for line in f:
-				if line.split(' ')[0] == userId:
-					uVec = self.getKeysFromLine(line)
-			pass
-
-		# Sanity check
-		if uVec is None: 
-			raise Exception("The user has no data in the training file")
-
+		weightTotalTime = 0
+		matrixTotalTime = 0
+		startTime = time.time()
 		# Now, compare the current user 'u' to all other users 'v', 
 		# using their preferences to judge their weighting in our 
 		# recommendation system
-		numSongs = self.getNumberSongs()
-		item_values_vector = coo_matrix((1,numSongs))
-		with open(self.training_file, 'r') as f:
-			for line in f:
-				if not line.split(' ')[0] == userId:
-					vVec = self.getKeysFromLine(line)
-					weighting = self.getUserWeighting(uVec, vVec)
-					if not weighting == 0.0:
-						weights = [weighting]* len(vVec)
-						row = [0] * len(vVec)
-						item_values_vector = item_values_vector + \
-							coo_matrix((weights,(row, map(lambda s: s-1, vVec))), shape=(1,numSongs))
-						
-				pass
-			pass
+		item_values_vector = coo_matrix((1,self.numSongs))
+		for vVec in user2songs:
+			weightTime = time.time()
+			weighting = self.getUserWeighting(uVec, vVec)
+			weightTotalTime += time.time() - weightTime
+			if not weighting == 0.0:
+				matrixTime = time.time()
+				weights = [weighting]* len(vVec)
+				row = [0] * len(vVec)
+				item_values_vector = item_values_vector + \
+					coo_matrix((weights,(row, map(lambda s: s-1, vVec))), shape=(1,self.numSongs))
+				matrixTotalTime += time.time() - matrixTime
+		print "Time to loop through users : ", time.time() - startTime
+		print "\tTime to calculate weights : ", weightTotalTime
+		print "\tTime to update matrix : ", matrixTotalTime
 
+
+		startTime = time.time()
 		# Take the sparse vector of item scores, sort the non-zero entries by score,
 		# and return the first 500 song ids corresponding to each score.
 		item_values_vector = coo_matrix(item_values_vector)
 		sorted_results = sorted(zip(item_values_vector.data, item_values_vector.col), reverse=True)
+
+		print "Time to sort recommendations : ", time.time() - startTime
+
+		startTime = time.time()
 
 		songs_to_recommend = []
 		for _,songId in sorted_results:
@@ -60,6 +59,8 @@ class CollaborativeModelPredictor(AbstractPredictor):
 			if not int(songId)+1 in uVec:
 				songs_to_recommend.append(str(songId+1))
 			pass
+
+		print "Time to build recommendations : ", time.time() - startTime, "\n"
 		return songs_to_recommend
 
 	def getUserWeighting(self, u1, u2):
@@ -72,17 +73,18 @@ class CollaborativeModelPredictor(AbstractPredictor):
 		weight = intersectSize / (len(u1)**self.alpha * len(u2)**(1.0 - self.alpha))
 		return weight**self.exponent
 
-	def getKeysFromLine(self, string):
-		"""
-		Given a line of data in the format 'userId songNumber:1 ...'
-		this method returns a list of every songNumber value for 
-		later use in creating a sparse matrix
-		"""
-		pairs = string.split(' ', 1)[1].split(' ')
-		return map(lambda x: int(x.split(':')[0]), pairs)
-
 	def getNumberSongs(self):
 		with open("../data/kaggle_songs.txt") as f:
 			for i, l in enumerate(f):
 				pass
-			return i + 1
+		return i+1
+
+	@staticmethod
+	def addDicts(dict1, dict2):
+		keysList = set(dict1.keys()) | set(dict2.keys())
+		result = dict()
+		for key in keysList:
+			a = dict1[key] if (key in dict1) else 0
+			b = dict2[key] if (key in dict2) else 0
+			result[key] = a+b
+		return result
