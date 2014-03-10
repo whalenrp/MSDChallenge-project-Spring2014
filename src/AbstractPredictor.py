@@ -20,11 +20,7 @@ class AbstractPredictor( object ):
 
 		# Build a list of lists containing song histories
 		# for each user.
-		user2songs = list()
-		with open(self.training_file) as f:
-			for line in f:
-				user2songs.append(self.getKeysFromLine(line))
-			pass
+		user2songs = self.getUserListeningHistories()
 
 		outWriter = open(self.output_file, 'w')
 		userFile = open(self.training_file, 'r')
@@ -34,6 +30,19 @@ class AbstractPredictor( object ):
 		userFile.close()
 		outWriter.close()
 		pass
+
+	def getUserListeningHistories(self):
+		"""
+		Returns a list of lists where each sublist consists of the
+		listening history (list of song ids) for one user.
+		"""
+		user2songs = list()
+		with open(self.training_file) as f:
+			for line in f:
+				user2songs.append(self.getKeysFromLine(line))
+			pass
+		return user2songs
+		
 
 	def predict(self, userId):
 		raise Exception('Abstract class cannot be instantiated')

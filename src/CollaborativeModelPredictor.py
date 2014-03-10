@@ -12,45 +12,48 @@ class CollaborativeModelPredictor(AbstractPredictor):
 		self.numSongs = self.getNumberSongs()
 		pass
 
-	def predict(self, uVec, user2songs):
+	def predict(self, uVec, user2songs =None):
 		"""
-		Given the id of a user from the kaggle_users file, this method
+		Given a list of song id's that a user has listened to, this method
 		will compare this user to every other user, aggregating their 
 		preferences together to provide a list of the top 500 recommendations.
 		"""
 
-		weightTotalTime = 0
-		matrixTotalTime = 0
-		startTime = time.time()
+		if user2songs is None:
+			user2songs = self.getUserListeningHistories()
+
+#		weightTotalTime = 0
+#		matrixTotalTime = 0
+#		startTime = time.time()
 		# Now, compare the current user 'u' to all other users 'v', 
 		# using their preferences to judge their weighting in our 
 		# recommendation system
 		item_values_vector = coo_matrix((1,self.numSongs))
 		for vVec in user2songs:
-			weightTime = time.time()
+#			weightTime = time.time()
 			weighting = self.getUserWeighting(uVec, vVec)
-			weightTotalTime += time.time() - weightTime
+#			weightTotalTime += time.time() - weightTime
 			if not weighting == 0.0:
-				matrixTime = time.time()
+#				matrixTime = time.time()
 				weights = [weighting]* len(vVec)
 				row = [0] * len(vVec)
 				item_values_vector = item_values_vector + \
 					coo_matrix((weights,(row, map(lambda s: s-1, vVec))), shape=(1,self.numSongs))
-				matrixTotalTime += time.time() - matrixTime
-	#	print "Time to loop through users : ", time.time() - startTime
-	#	print "\tTime to calculate weights : ", weightTotalTime
-	#	print "\tTime to update matrix : ", matrixTotalTime
+#				matrixTotalTime += time.time() - matrixTime
+#		print "Time to loop through users : ", time.time() - startTime
+#		print "\tTime to calculate weights : ", weightTotalTime
+#		print "\tTime to update matrix : ", matrixTotalTime
 
 
-		startTime = time.time()
+#		startTime = time.time()
 		# Take the sparse vector of item scores, sort the non-zero entries by score,
 		# and return the first 500 song ids corresponding to each score.
 		item_values_vector = coo_matrix(item_values_vector)
 		sorted_results = sorted(zip(item_values_vector.data, item_values_vector.col), reverse=True)
 
-	#	print "Time to sort recommendations : ", time.time() - startTime
+#		print "Time to sort recommendations : ", time.time() - startTime
 
-		startTime = time.time()
+#		startTime = time.time()
 
 		songs_to_recommend = []
 		for _,songId in sorted_results:
@@ -60,7 +63,7 @@ class CollaborativeModelPredictor(AbstractPredictor):
 				songs_to_recommend.append(str(songId+1))
 			pass
 
-	#	print "Time to build recommendations : ", time.time() - startTime, "\n"
+#		print "Time to build recommendations : ", time.time() - startTime, "\n"
 		return songs_to_recommend
 
 	def getUserWeighting(self, u1, u2):
