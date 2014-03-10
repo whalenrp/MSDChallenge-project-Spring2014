@@ -37,9 +37,9 @@ class CollaborativeModelPredictor(AbstractPredictor):
 				item_values_vector = item_values_vector + \
 					coo_matrix((weights,(row, map(lambda s: s-1, vVec))), shape=(1,self.numSongs))
 				matrixTotalTime += time.time() - matrixTime
-		print "Time to loop through users : ", time.time() - startTime
-		print "\tTime to calculate weights : ", weightTotalTime
-		print "\tTime to update matrix : ", matrixTotalTime
+	#	print "Time to loop through users : ", time.time() - startTime
+	#	print "\tTime to calculate weights : ", weightTotalTime
+	#	print "\tTime to update matrix : ", matrixTotalTime
 
 
 		startTime = time.time()
@@ -48,7 +48,7 @@ class CollaborativeModelPredictor(AbstractPredictor):
 		item_values_vector = coo_matrix(item_values_vector)
 		sorted_results = sorted(zip(item_values_vector.data, item_values_vector.col), reverse=True)
 
-		print "Time to sort recommendations : ", time.time() - startTime
+	#	print "Time to sort recommendations : ", time.time() - startTime
 
 		startTime = time.time()
 
@@ -60,7 +60,7 @@ class CollaborativeModelPredictor(AbstractPredictor):
 				songs_to_recommend.append(str(songId+1))
 			pass
 
-		print "Time to build recommendations : ", time.time() - startTime, "\n"
+	#	print "Time to build recommendations : ", time.time() - startTime, "\n"
 		return songs_to_recommend
 
 	def getUserWeighting(self, u1, u2):
@@ -78,13 +78,3 @@ class CollaborativeModelPredictor(AbstractPredictor):
 			for i, l in enumerate(f):
 				pass
 		return i+1
-
-	@staticmethod
-	def addDicts(dict1, dict2):
-		keysList = set(dict1.keys()) | set(dict2.keys())
-		result = dict()
-		for key in keysList:
-			a = dict1[key] if (key in dict1) else 0
-			b = dict2[key] if (key in dict2) else 0
-			result[key] = a+b
-		return result
