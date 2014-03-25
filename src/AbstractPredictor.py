@@ -1,3 +1,4 @@
+import Utils
 
 class AbstractPredictor( object ):
 	""" 
@@ -20,15 +21,22 @@ class AbstractPredictor( object ):
 
 		# Build a list of lists containing song histories
 		# for each user.
-		user2songs = self.getUserListeningHistories()
+		user2songs = Utils.usersToSongs(self.training_file, "../data/kaggle_songs.txt")
+		user2songs_hidden = Utils.usersToSongs(self.predict_file, "../data/kaggle_songs.txt", True);
 
 		outWriter = open(self.output_file, 'w')
-		userFile = open(self.training_file, 'r')
-		for line in userFile:
-			results = self.predict(self.getKeysFromLine(line), user2songs)
+		AP = float (0);
+		i = 1;
+		for userId,userSongs in user2songs.items():
+			results = self.predict(userSongs, user2songs.values())
 			outWriter.write(' '.join(results) + '\n')
-		userFile.close()
+
+			AP += float(Utils.AP(results, user2songs_hidden[userId], 500))
+			print results, "\n\n", user2songs_hidden[userId]
+			print i, " mAP: ", AP/float(i)
+			i +=float(1)
 		outWriter.close()
+			
 		pass
 
 	def getUserListeningHistories(self):
