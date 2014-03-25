@@ -26,27 +26,34 @@ class CollaborativeUsersPredictor(AbstractPredictor):
 		# Now, compare the current user 'u' to all other users 'v', 
 		# using their preferences to judge their weighting in our 
 		# recommendation system
-		item_values_vector = csr_matrix((1,self.numSongs))
+#		item_values_vector = csr_matrix((1,self.numSongs))
+		results = dict()
 		for vVec in user2songs:
 			weighting = self.getUserWeighting(uVec, vVec)
-			if not weighting == 0.0:
-				weights = [weighting]* len(vVec)
-				row = [0] * len(vVec)
-				item_values_vector = item_values_vector + \
-					csr_matrix((weights,(row, map(lambda s: s-1, vVec))), shape=(1,self.numSongs))
+			if weighting == 0.0:
+				continue
+			for song in vVec:
+				if song in results: results[song] += weighting
+				else: results[song] = weighting
+				
+#				weights = [weighting]* len(vVec)
+#				row = [0] * len(vVec)
+#				item_values_vector = item_values_vector + \
+#					csr_matrix((weights,(row, map(lambda s: s-1, vVec))), shape=(1,self.numSongs))
 
 		# Take the sparse vector of item scores, sort the non-zero entries by score,
 		# and return the first 500 song ids corresponding to each score.
-		item_values_vector = coo_matrix(item_values_vector)
-		sorted_results = sorted(zip(item_values_vector.data, item_values_vector.col), reverse=True)
+#		item_values_vector = coo_matrix(item_values_vector)
+#		sorted_results = sorted(zip(item_values_vector.data, item_values_vector.col), reverse=True)
+		sorted_results = sorted(zip(results.values(), results.keys()), reverse=True)
 
 
 		songs_to_recommend = []
 		for _,songId in sorted_results:
 			if len(songs_to_recommend) >= 500:
 				break
-			if not int(songId)+1 in uVec:
-				songs_to_recommend.append(str(int(songId)+1))
+			if not int(songId) in uVec:
+				songs_to_recommend.append(str(int(songId)))
 			pass
 
 		return songs_to_recommend
@@ -58,6 +65,7 @@ class CollaborativeUsersPredictor(AbstractPredictor):
 		alpha and (1 - alpha), and raising the result to the self.exponent power
 		"""
 		intersectSize = float(len(set(u1) & set(u2)))
+		if intersectSize == 0 : return 0.0
 		weight = intersectSize / (len(u1)**self.alpha * len(u2)**(1.0 - self.alpha))
 		return weight**self.exponent
 
