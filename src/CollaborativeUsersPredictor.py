@@ -1,5 +1,6 @@
 import sys # used for debugging temporarily
 import time
+import Utils
 from AbstractPredictor import AbstractPredictor
 from scipy.sparse import coo_matrix
 from scipy.sparse import csr_matrix
@@ -10,25 +11,21 @@ class CollaborativeUsersPredictor(AbstractPredictor):
 	def __init__(self, training_file, predict_file, output_file, alpha, exponent):
 		AbstractPredictor.__init__(self, training_file, predict_file, 
 			output_file, alpha, exponent)
-		self.numSongs = self.getNumberSongs()
+		self.user2songs = Utils.usersToSongs(self.training_file, "../data/kaggle_songs.txt").values()
 		pass
 
-	def predict(self, uVec, user2songs =None):
+	def predict(self, uVec):
 		"""
 		Given a list of song id's that a user has listened to, this method
 		will compare this user to every other user, aggregating their 
 		preferences together to provide a list of the top 500 recommendations.
 		"""
 
-		if user2songs is None:
-			user2songs = Utils.usersToSongs(self.training_file, "../data/kaggle_songs.txt").values()
-
 		# Now, compare the current user 'u' to all other users 'v', 
 		# using their preferences to judge their weighting in our 
 		# recommendation system
-#		item_values_vector = csr_matrix((1,self.numSongs))
 		results = dict()
-		for vVec in user2songs:
+		for vVec in self.user2songs:
 			weighting = self.getUserWeighting(uVec, vVec)
 			if weighting == 0.0:
 				continue
@@ -36,15 +33,8 @@ class CollaborativeUsersPredictor(AbstractPredictor):
 				if song in results: results[song] += weighting
 				else: results[song] = weighting
 				
-#				weights = [weighting]* len(vVec)
-#				row = [0] * len(vVec)
-#				item_values_vector = item_values_vector + \
-#					csr_matrix((weights,(row, map(lambda s: s-1, vVec))), shape=(1,self.numSongs))
-
-		# Take the sparse vector of item scores, sort the non-zero entries by score,
+		# Take the dict of item scores, sort the non-zero entries by score,
 		# and return the first 500 song ids corresponding to each score.
-#		item_values_vector = coo_matrix(item_values_vector)
-#		sorted_results = sorted(zip(item_values_vector.data, item_values_vector.col), reverse=True)
 		sorted_results = sorted(zip(results.values(), results.keys()), reverse=True)
 
 

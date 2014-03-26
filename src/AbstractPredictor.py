@@ -28,11 +28,10 @@ class AbstractPredictor( object ):
 		AP = float (0);
 		i = 1;
 		for userId,userSongs in user2songs.items():
-			results = self.predict(userSongs, user2songs.values())
+			results = self.predict(userSongs)
 			outWriter.write(' '.join(results) + '\n')
 
 			AP += float(Utils.AP(results, user2songs_hidden[userId], 500))
-			print results, "\n\n", user2songs_hidden[userId]
 			print i, " mAP: ", AP/float(i)
 			i +=float(1)
 		outWriter.close()

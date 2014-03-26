@@ -13,7 +13,7 @@ def main(args):
 		help='A file containing the list of users to predict songs for')
 	parser.add_argument('-output_file', default='../data/output_data.txt',
 		help='The file to output predictions')
-	parser.add_argument('-collaborative_mode', default = 'users', choices=['users','items'],
+	parser.add_argument('-mode', default = 'users', choices=['users','items'],
 		help='The type of algorithm to use: user-centric or item-centric')
 	parser.add_argument('-a', required=True, help='The alpha exponent used in weighting probabilities')
 	parser.add_argument('-q', required=True, 
@@ -22,7 +22,7 @@ def main(args):
 
 	# Based on our algorithm, build the corresponding strategy and predict results on it.
 	predictor = None
-	if values['collaborative_mode'] == 'users':
+	if values['mode'] == 'users':
 		predictor = CollaborativeUsersPredictor(values['train_file'], values['predict_file'], values['output_file'],
 			values['a'], values['q'])
 	else:

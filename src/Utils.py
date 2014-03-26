@@ -27,14 +27,13 @@ def usersToSongs(ifstream, songMappingFile, asSet=False):
 def AP(l_rec, sMu, tau):
 
     np=len(sMu)
-    #print "np:", np
     nc=0.0
     mapr_user=0.0
     for j,s in enumerate(l_rec):
         if j>=tau:
             break
         if int(s) in sMu:
-            print "s in sMu"
+            #print "s in sMu"
             nc+=1.0
             mapr_user+=nc/(j+1)
     mapr_user/=min(np,tau)
@@ -57,3 +56,18 @@ def song_to_idx(if_str):
      with open(if_str,"r") as f:
          sti=dict(map(lambda line: line.strip().split(' '),f.readlines()))
      return sti
+
+def songs2users(listenHistFile, songsFile):
+	songs2ids = song_to_idx(songsFile)
+	#songs2users = dict(map(lambda x: (int(x), set()), songs2ids.values()))
+	songs2users = dict()
+	with open(listenHistFile) as f:
+		for line in f:
+			user, song, _ = line.strip().split('\t')
+			songId = int(songs2ids[song])
+			if songId in songs2users:
+				songs2users[songId].add(user)
+			else:
+				songs2users[songId] = set([user])
+
+	return songs2users
