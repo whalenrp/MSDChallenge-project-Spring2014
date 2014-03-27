@@ -53,3 +53,6 @@ class CollaborativeItemsPredictor(AbstractPredictor):
 		if intersectSize == 0 : return 0.0
 		weight = intersectSize / (len(a)**self.alpha * len(b)**(1.0 - self.alpha))
 		return weight**self.exponent
+
+	def getType(self):
+		return "CollaborativeItemsPredictor"

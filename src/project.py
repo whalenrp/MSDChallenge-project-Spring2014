@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import sys
 import argparse
 from CollaborativeUsersPredictor import CollaborativeUsersPredictor
@@ -21,15 +22,33 @@ def main(args):
 	values = vars(parser.parse_args())
 
 	# Based on our algorithm, build the corresponding strategy and predict results on it.
-	predictor = None
-	if values['mode'] == 'users':
-		predictor = CollaborativeUsersPredictor(values['train_file'], values['predict_file'], values['output_file'],
-			values['a'], values['q'])
-	else:
-		predictor = CollaborativeItemsPredictor(values['train_file'], values['predict_file'], values['output_file'],
-			values['a'], values['q'])
-	predictor.predictAll()
-pass
+#	predictor = None
+#	if values['mode'] == 'users':
+#		predictor = CollaborativeUsersPredictor(values['train_file'], values['predict_file'], values['output_file'],
+#			values['a'], values['q'])
+#	else:
+#		predictor = CollaborativeItemsPredictor(values['train_file'], values['predict_file'], values['output_file'],
+#			values['a'], values['q'])
+#	predictor.predictAll()
+	predictors = list()
+	predictors.append(CollaborativeUsersPredictor(values['train_file'], values['predict_file'], values['output_file'],
+		values['a'], values['q']))
+	predictors.append(CollaborativeItemsPredictor(values['train_file'], values['predict_file'], values['output_file'],
+		values['a'], values['q']))
+
+	for p in predictors:
+		print p.getType()
+		print "\tmAP@500\t\ta\t\tq\titer\tsec"
+		for q in range(2,7):
+			for a in range(1, 10):
+				alpha = a/10.0
+				iterations = 5000
+				p.alpha = alpha
+				p.exponent = q
+				t0 = time.time()
+				mAP = p.predictAll(iterations)
+				print "\t%0F\t%0F\t%0d\t%0d\t%0F" %( mAP, p.alpha, p.exponent, iterations, time.time() - t0)
+				#, mAP, "\t", p.alpha, "\t", p.exponent, "\t", iterations, "\t", time.time() - t0 
 
 
 if __name__=='__main__':

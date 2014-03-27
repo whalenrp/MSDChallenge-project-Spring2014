@@ -64,3 +64,6 @@ class CollaborativeUsersPredictor(AbstractPredictor):
 			for i, l in enumerate(f):
 				pass
 		return i+1
+
+	def getType(self):
+		return "CollaborativeUsersPredictor"
