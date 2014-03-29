@@ -2,8 +2,6 @@ import sys # used for debugging temporarily
 import time
 import Utils
 from AbstractPredictor import AbstractPredictor
-from scipy.sparse import coo_matrix
-from scipy.sparse import csr_matrix
 
 
 class CollaborativeUsersPredictor(AbstractPredictor):
