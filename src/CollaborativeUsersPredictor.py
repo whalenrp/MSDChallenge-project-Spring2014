@@ -2,16 +2,21 @@ import sys # used for debugging temporarily
 import time
 import Utils
 from AbstractPredictor import AbstractPredictor
-from scipy.sparse import coo_matrix
-from scipy.sparse import csr_matrix
 
+
+basePath = '/home/richard/website/mlproject/MSDChallenge-project-Spring2014'
 
 class CollaborativeUsersPredictor(AbstractPredictor):
 
-	def __init__(self, training_file, predict_file, output_file, alpha, exponent):
+	def __init__(self, 
+            training_file = basePath +'/data/EvalDataYear1MSDWebsite/year1_test_triplets_hidden.txt',
+            predict_file=basePath + '/data/EvalDataYear1MSDWebsite/year1_test_triplets_visible.txt', 
+            output_file = basePath +'/data/output_data.txt', 
+            alpha = '0.5', 
+            exponent = '2'):
 		AbstractPredictor.__init__(self, training_file, predict_file, 
 			output_file, alpha, exponent)
-		self.user2songs = Utils.usersToSongs(self.training_file, "../data/kaggle_songs.txt").values()
+		self.user2songs = Utils.usersToSongs(self.training_file, basePath +"/data/kaggle_songs.txt")
 		pass
 
 	def predict(self, uVec):
@@ -25,7 +30,7 @@ class CollaborativeUsersPredictor(AbstractPredictor):
 		# using their preferences to judge their weighting in our 
 		# recommendation system
 		results = dict()
-		for vVec in self.user2songs:
+		for vVec in self.user2songs.values():
 			weighting = self.getUserWeighting(uVec, vVec)
 			if weighting == 0.0:
 				continue
@@ -60,7 +65,7 @@ class CollaborativeUsersPredictor(AbstractPredictor):
 		return weight**self.exponent
 
 	def getNumberSongs(self):
-		with open("../data/kaggle_songs.txt") as f:
+		with open(basePath +"/data/kaggle_songs.txt") as f:
 			for i, l in enumerate(f):
 				pass
 		return i+1
