@@ -16,7 +16,6 @@ songIdDict = {"init":"init"}
 keyDict = {"init":"init"}
 
 # process taste_profile_song_to_tracks to map filename -> songID
-# replace with true filename when ready
 with open ("taste_profile_song_to_tracks.txt",'r') as r:
 	for line in r:
 		splitLine = line.split(' ')
@@ -30,25 +29,12 @@ with open("kaggle_songs.txt",'r') as r:
 		songID, key = line.split(' ')[:2]
 		keyDict["" + songID.rstrip()] = "" + key.rstrip()
 
-
-# 4) pull artist_name from h5
-# 5) pull song title from h5
-
-# store data in a written format
-# txt file --> fname songID key artist_name song_title
-
 # change rootdir according to where the script is
 rootdir = "C:\\Users\\Aluminum\\Documents\\Academics\\2014Spring\\CS292\\FinalProject\\MSDChallenge-project-Spring2014\\scripts\\HoldsA\\"
 for root, subFolders, files in os.walk(rootdir):
 	with open(outfilePath, 'a') as fileOut:
 			
 		for fileName in files:
-		#	filePath = os.path.join(root,fileName)
-			
-		#	with open(filePath, 'r') as f:
-		#		toWrite = f.read()
-		#		fileOut.write("The file %s contains %s" % (filePath,toWrite))
-		#		fileOut.write(toWrite)
 			trackFileName = os.path.splitext(fileName)[0]
 			songID = songIdDict[trackFileName]
 			key = keyDict[songID]
