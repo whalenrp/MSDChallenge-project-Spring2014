@@ -18,11 +18,13 @@ class Main{
 	public static void main(String[] args){
 		try{
 			Configuration conf = HBaseConfiguration.create();
-			admin = new HBaseAdmin(conf);
+			HBaseAdmin admin = new HBaseAdmin(conf);
 			
 			//delete table if it's already been created before
-			admin.disableTable("msdInfo");
-			admin.deleteTable("msdInfo");
+			if(admin.tableExists("msdInfo")){
+				admin.disableTable("msdInfo");
+				admin.deleteTable("msdInfo");
+			}
 			
 			//create table skeleton
 			HTableDescriptor postsTableDescriptor = new HTableDescriptor("msdInfo");
@@ -37,7 +39,7 @@ class Main{
 				String line = in.nextLine();
 				// format: key - trackFileName - songID - artistName - songTitle
 				String[] splitLine = line.split(" ");
-				Put putTrackInfo = new Put(splitLine[0]);
+				Put putTrackInfo = new Put(Bytes.toBytes(splitLine[0]));
 
 				populateRow(putTrackInfo,"identifiers","trackFileName",splitLine[1]);
 				populateRow(putTrackInfo,"identifiers","songID",splitLine[2]);
@@ -51,11 +53,11 @@ class Main{
 			
 		} catch(IOException ex){
 			System.out.println("IOException: " + ex.getMessage());
-		} catch (MasterNotRunningException ex){
-			System.out.println("MasterNotRunningException: " + ex.getMessage());
-		} catch (ZooKeeperConnectionException ex){
-			System.out.println("ZooKeeperConnectionException: " + ex.getMessage());
-		}
+		} //catch (MasterNotRunningException ex){
+			//System.out.println("MasterNotRunningException: " + ex.getMessage());
+		//} catch (ZooKeeperConnectionException ex){
+		//	System.out.println("ZooKeeperConnectionException: " + ex.getMessage());
+		//}
 	}
 	
 	public static void populateRow(Put put, String columnFamily, 
