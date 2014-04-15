@@ -16,7 +16,6 @@ import java.lang.String;
 
 class Main{
 	public static void main(String[] args){
-		//unpack give txt file, populate table
 		try{
 			Configuration conf = HBaseConfiguration.create();
 			admin = new HBaseAdmin(conf);
@@ -66,26 +65,3 @@ class Main{
 				Bytes.toBytes(value));
     } 
 }
-
-	/**
-	
-	//remember to start hbase before you run this code
-	public static void buildTables(){
-		try{
-			//build flesh
-			//HTable table = new HTable(admin.getConfiguration(),"test");
-			//Put put = new Put(Bytes.toBytes("test-tacular"));
-			//put.add(Bytes.toBytes("quiz"),Bytes.toBytes("quizzical"),Bytes.toBytes("end-of-the-year"));
-			//table.put(put);
-			//table.flushCommits();
-			//table.close();
-
-			//Get get = new Get(Bytes.toBytes("test-tacular"));
-			//get.addFamily(Bytes.toBytes("quiz"));
-			//get.setMaxVersions(3);
-			//Result result = table.get(get);
-			//System.out.println("results: " + result.toString());
-		} catch(IOException ex){
-			System.out.println("IOException: " + ex.getMessage());
-		}
-	} **/
