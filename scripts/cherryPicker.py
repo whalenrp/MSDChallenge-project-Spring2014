@@ -29,19 +29,20 @@ with open("kaggle_songs.txt",'r') as r:
 		songID, key = line.split(' ')[:2]
 		keyDict["" + songID.rstrip()] = "" + key.rstrip()
 
-# change rootdir according to where the script is
-rootdir = "C:\\Users\\Aluminum\\Documents\\Academics\\2014Spring\\CS292\\FinalProject\\MSDChallenge-project-Spring2014\\scripts\\HoldsA\\"
+# change rootdir according to where the source files are
+rootdir = "C:\\Users\\Aluminum\\Documents\\Academics\\2014Spring\\CS292\\FinalProject\\MSDChallenge-project-Spring2014\\scripts\\subfolder\\"
 for root, subFolders, files in os.walk(rootdir):
 	with open(outfilePath, 'a') as fileOut:
 			
 		for fileName in files:
-			trackFileName = os.path.splitext(fileName)[0]
-			songID = songIdDict[trackFileName]
-			key = keyDict[songID]
-			
-			artist_name = hdf5_functions.get_artist_name(h5)
-			title = hdf5_functions.get_title(h5)
-			
-			
-			fileOut.write(key + " " + trackFileName + " " + songID + "\n")
+			if fileName.lower().endswith(".h5"):
+				trackFileName = os.path.splitext(fileName)[0]
+				songID = songIdDict[trackFileName]
+				key = keyDict[songID]
+				
+				artist_name = hdf5_functions.get_artist_name(h5)
+				title = hdf5_functions.get_title(h5)
+				
+				
+				fileOut.write(key + " " + trackFileName + " " + songID + "\n")
 			

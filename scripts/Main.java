@@ -1,14 +1,14 @@
 // references lab 2 work
-// main java file for populating hbase table
+// Populates msdInfo table for HBase Database
 import java.io.IOException;
-//import org.apache.hadoop.conf.Configuration;
-//import org.apache.hadoop.hbase.*;
-//import org.apache.hadoop.hbase.client.HBaseAdmin;
-//import org.apache.hadoop.hbase.client.HTable;
-//import org.apache.hadoop.hbase.client.Put;
-//import org.apache.hadoop.hbase.client.Get;
-//import org.apache.hadoop.hbase.client.Result;
-//import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.*;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.Scanner;
 import java.io.File;
@@ -33,7 +33,7 @@ class Main{
 			
 			//populate table
 			HTable msdInfoTable = new HTable(admin.getConfiguration(), "msdInfo");
-			Scanner in = new Scanner(new File("temp.txt"));
+			Scanner in = new Scanner(new File("temp.txt")); // **change source file name
 			while(in.hasNextLine()){
 				String line = in.nextLine();
 				// format: key - trackFileName - songID - artistName - songTitle
