@@ -36,10 +36,11 @@ class Main{
             
             //open duplicates file and load into set
             Scanner in = new Scanner(new File("msd_duplicates.txt")); //
-            String line = null;
+            String line = "";
             String[] splitLine;
             HashSet<String> duplicates = new HashSet<String>();
 			while(in.hasNextLine()){
+				line = in.nextLine();
 				splitLine = line.split(" ");
 				if (Character.isLetter(splitLine[0].charAt(0)))
 					duplicates.add(splitLine[0]);
