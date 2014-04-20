@@ -1,10 +1,11 @@
 
 
-from django.conf.urls import patterns, url
+from django.conf.urls.defaults import patterns, url
 
 from ml_app import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-    url(r'^(?P<user_id>\d+)/$', views.user_page, name='user_page')
+    url(r'^(?P<user_id>\d+)/$', views.user_info),
+    url(r'^song/(?P<song_id>\d+)/$', views.song_info)
 )
