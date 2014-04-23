@@ -3,7 +3,7 @@
 #       Preference Learning: Problems and Applications in AI (PL-12), ECAI-12 Workshop, Montpellier
 #       http://www.ke.tu-darmstadt.de/events/PL-12/papers/08-aiolli.pdf 
 
-basePath = '/home/richard/website/mlproject/MSDChallenge-project-Spring2014'
+basePath = '/home/ubuntu/MSDChallenge-project-Spring2014'
 
 def usersToSongs(ifstream, songMappingFile, asSet=False):
 	user_to_songs = dict();

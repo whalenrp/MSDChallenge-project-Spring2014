@@ -4,7 +4,7 @@ import Utils
 from AbstractPredictor import AbstractPredictor
 
 
-basePath = '/home/richard/website/mlproject/MSDChallenge-project-Spring2014'
+basePath = '/home/ubuntu/MSDChallenge-project-Spring2014'
 
 class CollaborativeUsersPredictor(AbstractPredictor):
 

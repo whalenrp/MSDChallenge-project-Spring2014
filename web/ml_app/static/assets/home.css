@@ -1,0 +1,53 @@
+.inner-container {
+	padding-top: 100px;
+}
+
+.history-item img {
+	width: 100%;
+}
+
+
+.frame { width: 100%; height: 275px; padding: 0; }
+.frame .slidee { margin: 0; padding: 0; height: 100%; list-style: none; }
+.frame .slidee li { float: left; margin: 0 30px 0 0; padding: 0 10px; width: 200px; height: 100%; }
+
+.scrollbar { width: 100%; height: 10px; }
+.scrollbar .handle {
+    width: 100px;
+    height: 100%;
+    background: #222;
+}
+
+table {
+        width: 100%;
+    }
+
+thead, tbody, tr, td, th { display: block; }
+
+tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+thead th {
+    height: 30px;
+
+    /*text-align: left;*/
+}
+
+tbody {
+    height: 300px;
+    overflow-y: auto;
+}
+
+thead {
+    /* fallback */
+}
+
+
+tbody td, thead th {
+	width: 50%;
+    float: left;
+}
