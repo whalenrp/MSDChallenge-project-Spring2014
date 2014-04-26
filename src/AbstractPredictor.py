@@ -1,4 +1,5 @@
 import Utils
+from pyspark import SparkContext
 
 class AbstractPredictor( object ):
 	""" 
@@ -24,17 +25,21 @@ class AbstractPredictor( object ):
 		user2songs = Utils.usersToSongs(self.training_file, "../data/kaggle_songs.txt")
 		user2songs_hidden = Utils.usersToSongs(self.predict_file, "../data/kaggle_songs.txt", True);
 
-		outWriter = open(self.output_file, 'w')
-		AP = float (0);
-		i = 1;
-		for userId,userSongs in user2songs.items():
-			results = self.predict(userSongs)
-			outWriter.write(' '.join(results) + '\n')
+		sc = SparkContext("spark://ip-172-31-41-158:7077", "testingPredictions", "/home/ec2-user/spark-0.9.1", 
+			["../data/kaggle_songs.txt", "../data/kaggle_visible_evaluation_triplets.txt", "../data/kaggle_users.txt"])
+		user2songs = sc.parallelize(user2songs.items())
+		user2songs.map(lambda (x,y): self.predict(y)).saveAsTextFile("sparktest")
+	#	outWriter = open(self.output_file, 'w')
+	#	AP = float (0);
+	#	i = 1;
+	#	for userId,userSongs in user2songs.items():
+	#		results = self.predict(userSongs)
+	#		outWriter.write(' '.join(results) + '\n')
 
-			AP += float(Utils.AP(results, user2songs_hidden[userId], 500))
-			print i, " mAP: ", AP/float(i)
-			i +=float(1)
-		outWriter.close()
+	#		AP += float(Utils.AP(results, user2songs_hidden[userId], 500))
+	#		print i, " mAP: ", AP/float(i)
+	#		i +=float(1)
+	#	outWriter.close()
 			
 		pass
 
